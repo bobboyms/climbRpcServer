@@ -3,19 +3,17 @@ package main
 import (
 	"message/datatransfer"
 	"message/managerfilesystem"
-	"message/topiccontroller"
+	"message/topicservice"
 )
 
 func main() {
 
-	var fileSystem managerfilesystem.FileSystem =
-		new(managerfilesystem.FileSystemBinaryEncoder)
+	var fileSystem managerfilesystem.FileSystem = new(managerfilesystem.FileSystemBinaryEncoder)
 
-	var manager topiccontroller.TopicController =
-		new(topiccontroller.TopicControllerImp).Init(fileSystem)
+	var manager topicservice.TopicService = new(topicservice.TopicServiceImp).Init(fileSystem)
 
 	manager.TopicCreate(datatransfer.TopicProducerRequest{
-		"baixarEstoque","",
+		"baixarEstoque", "",
 	})
 
 	println(manager)
