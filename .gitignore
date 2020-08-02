@@ -1,0 +1,11 @@
+#intellij files
+.idea/
+.idea
+.idea/*
+*.iml
+*.ipr
+*.iws
+.idea/workspace.xml
+/idea/workspace.xml
+build-idea/
+*.exe
