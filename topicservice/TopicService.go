@@ -1,9 +1,9 @@
 package topicservice
 
 import (
-	"message/datatransfer"
 	"message/managerfilesystem"
 	"message/model"
+	"message/modeldatatransfer"
 	"strings"
 )
 
@@ -37,7 +37,7 @@ func (m *TopicServiceImp) createTopicFile(dir, message string) (string, error) {
 	})
 }
 
-func (m *TopicServiceImp) TopicCreate(request datatransfer.TopicProducerRequest) datatransfer.TopicProducerResponse {
+func (m *TopicServiceImp) TopicCreate(request modeldatatransfer.TopicProducerRequest) modeldatatransfer.TopicProducerResponse {
 
 	dir := m.createDir(request.TopicName)
 
@@ -47,7 +47,7 @@ func (m *TopicServiceImp) TopicCreate(request datatransfer.TopicProducerRequest)
 		return m.getError(err.Error())
 	}
 
-	return datatransfer.TopicProducerResponse{
+	return modeldatatransfer.TopicProducerResponse{
 		Id:         id,
 		StatusCode: STATUS_OK,
 		Message:    "topic created successfully",
@@ -55,12 +55,12 @@ func (m *TopicServiceImp) TopicCreate(request datatransfer.TopicProducerRequest)
 
 }
 
-func (m *TopicServiceImp) TopicGet(request datatransfer.TopicGetRequest) datatransfer.TopicGetResponse {
+func (m *TopicServiceImp) TopicGet(request modeldatatransfer.TopicGetRequest) modeldatatransfer.TopicGetResponse {
 	panic("implement me")
 }
 
-func (m *TopicServiceImp) getError(message string) datatransfer.TopicProducerResponse {
-	return datatransfer.TopicProducerResponse{
+func (m *TopicServiceImp) getError(message string) modeldatatransfer.TopicProducerResponse {
+	return modeldatatransfer.TopicProducerResponse{
 		Id:         "0",
 		StatusCode: STATUS_INTERNAL_ERROR,
 		Message:    message,

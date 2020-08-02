@@ -1,7 +1,7 @@
-package datatransfer
+package modeldatatransfer
 
 type TopicProducerRequest struct {
-	TopicName string `json:",topicName"`
+	TopicName    string `json:",topicName"`
 	TopicMessage string `json:",topicMessage"`
 }
 
@@ -16,7 +16,7 @@ type TopicGetRequest struct {
 }
 
 type TopicGetResponse struct {
-	Id string `json:",id"`
-	Message string `json:",message"`
-	StatusCode uint `json:",statusCode"`
+	Id         string `json:",id"`
+	Message    string `json:",message"`
+	StatusCode uint   `json:",statusCode"`
 }

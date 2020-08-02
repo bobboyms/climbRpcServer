@@ -1,8 +1,8 @@
 package main
 
 import (
-	"message/datatransfer"
 	"message/managerfilesystem"
+	"message/modeldatatransfer"
 	"message/topicservice"
 )
 
@@ -12,7 +12,7 @@ func main() {
 
 	var manager topicservice.TopicService = new(topicservice.TopicServiceImp).Init(fileSystem)
 
-	manager.TopicCreate(datatransfer.TopicProducerRequest{
+	manager.TopicCreate(modeldatatransfer.TopicProducerRequest{
 		"baixarEstoque", "",
 	})
 

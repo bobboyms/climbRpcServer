@@ -1,8 +1,8 @@
 package unittest
 
 import (
-	"message/datatransfer"
 	"message/managerfilesystem"
+	"message/modeldatatransfer"
 	"message/topicservice"
 	"testing"
 )
@@ -13,7 +13,7 @@ func TestCreateTopic(t *testing.T) {
 
 	var manager topicservice.TopicService = new(topicservice.TopicServiceImp).Init(fileSystem)
 
-	response := manager.TopicCreate(datatransfer.TopicProducerRequest{
+	response := manager.TopicCreate(modeldatatransfer.TopicProducerRequest{
 		"baixarEstoque", "{'id':10,'name':'thiago'}",
 	})
 
