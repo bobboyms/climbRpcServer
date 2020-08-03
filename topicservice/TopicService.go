@@ -2,6 +2,7 @@ package topicservice
 
 import (
 	"message/managerfilesystem"
+	"message/managerindex"
 	"message/model"
 	"message/modeldatatransfer"
 	"strings"
@@ -10,6 +11,7 @@ import (
 const (
 	STATUS_OK             = 200
 	STATUS_INTERNAL_ERROR = 500
+	STATUS_NOT_FOUND      = 404
 )
 
 type TopicServiceImp struct {
@@ -41,14 +43,21 @@ func (m *TopicServiceImp) TopicCreate(request modeldatatransfer.TopicProducerReq
 
 	dir := m.createDir(request.TopicName)
 
-	id, err := m.createTopicFile(dir, request.TopicName)
+	var index managerindex.ManagerIndex = new(managerindex.ManagerIndexImp).
+		Init(dir, m.fileSystem)
+
+	index.CreateIndex()
+
+	fileName, err := m.createTopicFile(dir, request.TopicName)
+
+	index.AddItem(fileName)
 
 	if err != nil {
 		return m.getError(err.Error())
 	}
 
 	return modeldatatransfer.TopicProducerResponse{
-		Id:         id,
+		Id:         fileName,
 		StatusCode: STATUS_OK,
 		Message:    "topic created successfully",
 	}
@@ -56,7 +65,46 @@ func (m *TopicServiceImp) TopicCreate(request modeldatatransfer.TopicProducerReq
 }
 
 func (m *TopicServiceImp) TopicGet(request modeldatatransfer.TopicGetRequest) modeldatatransfer.TopicGetResponse {
-	panic("implement me")
+
+	dir := request.TopicName
+
+	if !m.fileSystem.IsFileExist(dir, managerindex.FileName) {
+		return modeldatatransfer.TopicGetResponse{
+			Id:         "0",
+			Message:    "ITEM MESSAGE NOT FOUND",
+			StatusCode: STATUS_NOT_FOUND,
+		}
+	}
+
+	var index managerindex.ManagerIndex = new(managerindex.ManagerIndexImp).
+		Init(dir, m.fileSystem)
+
+	item, err := index.GetFirstIndex()
+
+	if err != nil {
+		return modeldatatransfer.TopicGetResponse{
+			Id:         "0",
+			Message:    "ITEM MESSAGE NOT FOUND",
+			StatusCode: STATUS_NOT_FOUND,
+		}
+	}
+
+	fileName, _ := index.GetItem(item)
+
+	var mf model.MessageFileStruct
+	m.fileSystem.OpenFile(dir, fileName+managerfilesystem.FileExtension, &mf)
+
+	defer func() {
+		index.RemoveItem(item)
+		m.fileSystem.DeleteFile(dir, fileName+managerfilesystem.FileExtension)
+	}()
+
+	return modeldatatransfer.TopicGetResponse{
+		Id:         mf.Id,
+		Message:    mf.Message,
+		StatusCode: STATUS_OK,
+	}
+
 }
 
 func (m *TopicServiceImp) getError(message string) modeldatatransfer.TopicProducerResponse {

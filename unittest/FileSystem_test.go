@@ -8,22 +8,9 @@ import (
 )
 
 const (
-	fileName = "myfile.m"
+	fileName   = "myfile.m"
 	folderName = "testediretorio"
 )
-
-func GlobalTest(t *testing.T) {
-
-	var fs managerfilesystem.FileSystem = new(managerfilesystem.FileSystemGobEncoder)
-
-	fs.CreateDirectory(folderName)
-
-	_, err := os.Stat(folderName)
-
-	if os.IsNotExist(err) {
-		t.Error("Folder dont created")
-	}
-}
 
 func TestCreateDirectory(t *testing.T) {
 
@@ -35,15 +22,6 @@ func TestCreateDirectory(t *testing.T) {
 
 	if os.IsNotExist(err) {
 		t.Error("Folder dont created")
-	}
-
-	fs.CreateFile(fileName, folderName, filesystem.MessageFileStruct{
-		"tes",
-		"sdsdsd",
-	})
-
-	if _, err := os.Stat(folderName + "/" + fileName); err != nil {
-		t.Error("File dont created")
 	}
 
 }
@@ -62,7 +40,18 @@ func TestCreateFile(t *testing.T) {
 	}
 }
 
-func TestOpenFile(t *testing.T)  {
+func TestIsFileExsit(t *testing.T) {
+
+	var fs managerfilesystem.FileSystem = new(managerfilesystem.FileSystemGobEncoder)
+
+	res := fs.IsFileExist(folderName, fileName)
+
+	if res == false {
+		t.Error("File not exist")
+	}
+}
+
+func TestOpenFile(t *testing.T) {
 	var fs managerfilesystem.FileSystem = new(managerfilesystem.FileSystemGobEncoder)
 
 	var m filesystem.MessageFileStruct
@@ -74,7 +63,7 @@ func TestOpenFile(t *testing.T)  {
 
 }
 
-func TestDeleteFile(t *testing.T)  {
+func TestDeleteFile(t *testing.T) {
 
 	var fs managerfilesystem.FileSystem = new(managerfilesystem.FileSystemGobEncoder)
 	fs.DeleteFile(folderName, fileName)

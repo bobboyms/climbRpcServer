@@ -10,6 +10,10 @@ import (
 
 type FileSystemBinaryEncoder struct{}
 
+func (f *FileSystemBinaryEncoder) IsFileExist(dir, fileName string) bool {
+	return isFileExist(dir, fileName)
+}
+
 func (f *FileSystemBinaryEncoder) DeleteFile(dir, fileName string) {
 	deleteFile(dir, fileName)
 }
@@ -17,6 +21,7 @@ func (f *FileSystemBinaryEncoder) DeleteFile(dir, fileName string) {
 func (f *FileSystemBinaryEncoder) CreateDirectory(name string) string {
 	return createDirectory(name)
 }
+
 //
 //func (f *FileSystemBinaryEncoder) CreateFileAndDir(fileName, folderName string, fileStruct interface{})  {
 //
@@ -42,8 +47,6 @@ func (f *FileSystemBinaryEncoder) CreateDirectory(name string) string {
 
 func (f *FileSystemBinaryEncoder) CreateFile(fileName, dirName string, fileStruct interface{}) error {
 
-	println("karalho")
-
 	encoded, err := binary.Marshal(fileStruct)
 
 	_, err = os.Stat(filepath.Join(dirName))
@@ -52,9 +55,9 @@ func (f *FileSystemBinaryEncoder) CreateFile(fileName, dirName string, fileStruc
 		println("Não existe karaio")
 	}
 
-	println(filepath.Join(RootDir + dirName, filepath.Base(fileName)))
+	println(filepath.Join(RootDir+dirName, filepath.Base(fileName)))
 
-	file, err := os.Create(filepath.Join(RootDir + dirName, filepath.Base(fileName)))
+	file, err := os.Create(filepath.Join(RootDir+dirName, filepath.Base(fileName)))
 
 	if err != nil {
 		log.Fatal(err)
@@ -74,11 +77,12 @@ func (f *FileSystemBinaryEncoder) CreateFile(fileName, dirName string, fileStruc
 func (f *FileSystemBinaryEncoder) OpenFile(dirName, fileName string, v interface{}) {
 
 	file, err := os.Open(RootDir + dirName + "/" + fileName)
-	defer file.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer file.Close()
 
 	stats, _ := file.Stat()
 	var size int64 = stats.Size()
@@ -92,4 +96,3 @@ func (f *FileSystemBinaryEncoder) OpenFile(dirName, fileName string, v interface
 	}
 
 }
-

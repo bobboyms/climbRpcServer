@@ -10,6 +10,10 @@ import (
 
 type FileSystemGobEncoder struct{}
 
+func (f *FileSystemGobEncoder) IsFileExist(dir, fileName string) bool {
+	return isFileExist(dir, fileName)
+}
+
 func (f *FileSystemGobEncoder) DeleteFile(dir, fileName string) {
 	deleteFile(dir, fileName)
 }
@@ -28,7 +32,13 @@ func (f *FileSystemGobEncoder) CreateFile(fileName, dirName string, fileStruct i
 		log.Fatal("encode error:", err)
 	}
 
-	file, _ := os.Create(filepath.Join(RootDir + dirName, filepath.Base(fileName)))
+	file, _ := os.Create(filepath.Join(RootDir+dirName, filepath.Base(fileName)))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
 
 	_, err = file.Write(byteBuffer.Bytes())
 
@@ -42,11 +52,12 @@ func (f *FileSystemGobEncoder) CreateFile(fileName, dirName string, fileStruct i
 func (f *FileSystemGobEncoder) OpenFile(dirName, fileName string, v interface{}) {
 
 	file, err := os.Open(RootDir + dirName + "/" + fileName)
-	defer file.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer file.Close()
 
 	stats, _ := file.Stat()
 	var size int64 = stats.Size()
@@ -60,4 +71,3 @@ func (f *FileSystemGobEncoder) OpenFile(dirName, fileName string, v interface{})
 		log.Fatal("decode error: ", err)
 	}
 }
-

@@ -6,17 +6,15 @@ import (
 	"os"
 )
 
-func createDirectory(name string) (string) {
+func createDirectory(name string) string {
 
 	dirName := RootDir + name
-
-	println(dirName)
 
 	_, err := os.Stat(dirName)
 
 	if os.IsNotExist(err) {
 
-		if err := os.MkdirAll(dirName, 0666); err != nil {
+		if err := os.MkdirAll(dirName, 0777); err != nil {
 			panic("Unable to create directory! - " + err.Error())
 		}
 
@@ -38,9 +36,24 @@ func readNextBytes(file *os.File, number int) []byte {
 	return bytes
 }
 
-func deleteFile(dir, fileName string)  {
+func isFileExist(dir, fileName string) bool {
 
 	path := RootDir + dir + "/" + fileName
+
+	if _, err := os.Stat(path); err == nil {
+		return true
+	}
+
+	return false
+
+}
+
+func deleteFile(dir, fileName string) {
+
+	path := RootDir + dir + "/" + fileName
+
+	println("****** delete file *******")
+	println(path)
 
 	err := os.Remove(path)
 
