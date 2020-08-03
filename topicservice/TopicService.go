@@ -9,9 +9,13 @@ import (
 )
 
 const (
-	STATUS_OK             = 200
-	STATUS_INTERNAL_ERROR = 500
-	STATUS_NOT_FOUND      = 404
+	StatusOk            = 200
+	StatusInternalError = 500
+	StatusNotFound      = 404
+)
+
+const (
+	IndexFileName = "INDEX.m"
 )
 
 type TopicServiceImp struct {
@@ -46,11 +50,11 @@ func (m *TopicServiceImp) TopicCreate(request modeldatatransfer.TopicProducerReq
 	var index managerindex.ManagerIndex = new(managerindex.ManagerIndexImp).
 		Init(dir, m.fileSystem)
 
-	index.CreateIndex()
+	index.CreateIndex(IndexFileName)
 
 	fileName, err := m.createTopicFile(dir, request.TopicName)
 
-	index.AddItem(fileName)
+	index.AddItem(fileName, IndexFileName)
 
 	if err != nil {
 		return m.getError(err.Error())
@@ -58,7 +62,7 @@ func (m *TopicServiceImp) TopicCreate(request modeldatatransfer.TopicProducerReq
 
 	return modeldatatransfer.TopicProducerResponse{
 		Id:         fileName,
-		StatusCode: STATUS_OK,
+		StatusCode: StatusOk,
 		Message:    "topic created successfully",
 	}
 
@@ -68,41 +72,41 @@ func (m *TopicServiceImp) TopicGet(request modeldatatransfer.TopicGetRequest) mo
 
 	dir := request.TopicName
 
-	if !m.fileSystem.IsFileExist(dir, managerindex.FileName) {
+	if !m.fileSystem.IsFileExist(dir, IndexFileName) {
 		return modeldatatransfer.TopicGetResponse{
 			Id:         "0",
 			Message:    "ITEM MESSAGE NOT FOUND",
-			StatusCode: STATUS_NOT_FOUND,
+			StatusCode: StatusNotFound,
 		}
 	}
 
 	var index managerindex.ManagerIndex = new(managerindex.ManagerIndexImp).
 		Init(dir, m.fileSystem)
 
-	item, err := index.GetFirstIndex()
+	item, err := index.GetFirstIndex(IndexFileName)
 
 	if err != nil {
 		return modeldatatransfer.TopicGetResponse{
 			Id:         "0",
 			Message:    "ITEM MESSAGE NOT FOUND",
-			StatusCode: STATUS_NOT_FOUND,
+			StatusCode: StatusNotFound,
 		}
 	}
 
-	fileName, _ := index.GetItem(item)
+	fileName, _ := index.GetItem(item, IndexFileName)
 
 	var mf model.MessageFileStruct
 	m.fileSystem.OpenFile(dir, fileName+managerfilesystem.FileExtension, &mf)
 
 	defer func() {
-		index.RemoveItem(item)
+		index.RemoveItem(item, IndexFileName)
 		m.fileSystem.DeleteFile(dir, fileName+managerfilesystem.FileExtension)
 	}()
 
 	return modeldatatransfer.TopicGetResponse{
 		Id:         mf.Id,
 		Message:    mf.Message,
-		StatusCode: STATUS_OK,
+		StatusCode: StatusOk,
 	}
 
 }
@@ -110,7 +114,7 @@ func (m *TopicServiceImp) TopicGet(request modeldatatransfer.TopicGetRequest) mo
 func (m *TopicServiceImp) getError(message string) modeldatatransfer.TopicProducerResponse {
 	return modeldatatransfer.TopicProducerResponse{
 		Id:         "0",
-		StatusCode: STATUS_INTERNAL_ERROR,
+		StatusCode: StatusInternalError,
 		Message:    message,
 	}
 }

@@ -1,10 +1,10 @@
 package managerindex
 
 type ManagerIndex interface {
-	CreateIndex() error
-	AddItem(fileName string) error
-	RemoveItem(index uint16) error
-	GetItem(index uint16) (string, error)
-	GetLastIndex() (uint16, error)
-	GetFirstIndex() (uint16, error)
+	CreateIndex(indexFileName string) error
+	AddItem(fileName string, indexFileName string) error
+	RemoveItem(index uint16, indexFileName string) error
+	GetItem(index uint16, indexFileName string) (string, error)
+	GetLastIndex(indexFileName string) (uint16, error)
+	GetFirstIndex(indexFileName string) (uint16, error)
 }
