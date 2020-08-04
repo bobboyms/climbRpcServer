@@ -40,6 +40,8 @@ func isFileExist(dir, fileName string) bool {
 
 	path := RootDir + dir + "/" + fileName
 
+	println(path)
+
 	if _, err := os.Stat(path); err == nil {
 		return true
 	}

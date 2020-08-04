@@ -87,10 +87,12 @@ func (m ManagerIndexImp) GetFirstIndex(indexFileName string) (uint16, error) {
 	i, _ := m.GetIndexStruct(indexFileName)
 
 	return func(items map[uint16]string) (uint16, error) {
+
 		keys := make([]int, 0, len(items))
 		for k := range items {
 			keys = append(keys, int(k))
 		}
+
 		sort.Ints(keys)
 
 		if len(keys) > 0 {
@@ -98,6 +100,32 @@ func (m ManagerIndexImp) GetFirstIndex(indexFileName string) (uint16, error) {
 		}
 
 		return 0, errors.New("Does not contain active index")
+	}(i.Itens)
+
+}
+
+func (m ManagerIndexImp) GetIndex(id string, indexFileName string) (uint16, error) {
+
+	i, _ := m.GetIndexStruct(indexFileName)
+
+	return func(items map[uint16]string) (uint16, error) {
+
+		var index uint16
+		for k, v := range items {
+
+			if v == id {
+				index = k
+				break
+			}
+
+		}
+
+		if &index == nil {
+			return 0, errors.New("Not found in index")
+		}
+
+		return index, nil
+
 	}(i.Itens)
 
 }
